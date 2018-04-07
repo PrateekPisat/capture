@@ -20,7 +20,10 @@ defmodule CaptureWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", CaptureWeb do
-  #   pipe_through :api
-  # end
+   scope "/api/v1", CaptureWeb do
+     pipe_through :api
+
+     resources "/users", UserController, except: [:new, :edit]
+     post "/session", SessionController, :create
+   end
 end
