@@ -3,6 +3,7 @@ defmodule CaptureWeb.UserSocket do
 
   ## Channels
   # channel "room:*", CaptureWeb.RoomChannel
+  channel "games:*", CaptureWeb.GamesChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

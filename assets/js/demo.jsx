@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
+import socket from "./socket";
 
 export default function run_demo(root) {
   ReactDOM.render(<Demo channel/>, root);
@@ -47,11 +48,15 @@ const Register = () => {
   );
 }
 
+
+
 class Demo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        token: ""
+        user: "",
+        token: "",
+        channel_no: ""
  	   };
   }
 
@@ -99,16 +104,58 @@ class Demo extends React.Component {
       data: JSON.stringify(data),
       success: (resp) => {
           this.setState(_.extend(this.state, { token: resp }));
+          this.getUser(resp.user_id)
         },
       error:(resp) => {
-        this.resetToken();
+        this.setState(_.extend(this.state, { token: "Invalid" }));
       }
     });
   }
 
   resetToken()
   {
-    this.setState(_.extend(this.state, { token: "invalid" }));
+    this.setState(_.extend(this.state, { token: null }));
+  }
+
+  getUser(user_id)
+  {
+
+    $.ajax("/api/v1/users/" + user_id, {
+      method: "get",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      success: (resp) => {
+          this.setState(_.extend(this.state, { user: resp.data }));
+        },
+      error:(resp) => {
+        alert("user Not Found")
+      }
+    });
+  }
+
+  findMatch(win_percent, user_id)
+  {
+    let data = {
+        win_percent: win_percent,
+        user_id: user_id
+    }
+    $.ajax("/api/v1/newgame/", {
+      method: "post",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(data),
+      success: (resp) => {
+          console.log(resp.channel_no);
+          let channel = socket.channel("games:"+resp.channel_no, {})
+          channel.join()
+            .receive("ok", resp => { console.log("Joined successfully", resp) })
+            .receive("error", resp => { console.log("Unable to join", resp) })
+          this.setState(_.extend(this.state, { channel_no: resp.channel_no }));
+        },
+      error:(resp) => {
+        alert("Something went wrong!")
+      }
+    });
   }
 
 
@@ -153,7 +200,9 @@ class Demo extends React.Component {
               {
                 return(
                   <div>
-                    Landing
+                    Welcome {this.state.user.name}!<br/>
+                  Your Win Percentage =  {this.state.user.win_percent}<br/>
+                <Link to="/gamepage" className = "btn btn-primary" onClick={() => this.findMatch(this.state.user.win_percent, this.state.user.id)}>Find Match</Link>
                   </div>
                 );
               }
@@ -176,6 +225,23 @@ class Demo extends React.Component {
                       <Link to="/" onClick={() => this.resetToken()}>Cancel</Link>
                     </div>
                   </div>
+                );
+              }
+            }
+          }/>
+        <Route path="/gamepage" render={() =>
+            {
+              if(this.state.channel_no)
+              {
+                return(
+                  <div>
+                    Welcome to New Game {this.state.channel_no}<br/>
+                  </div>
+                );
+              }
+              else {
+                return(
+                  <div>Searching...<br/></div>
                 );
               }
             }

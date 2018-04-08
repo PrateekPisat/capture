@@ -14,7 +14,7 @@ defmodule CaptureWeb.UserView do
     %{id: user.id,
       name: user.name,
       email: user.email,
-      password_hash: user.password_hash,
+      #password_hash: user.password_hash,
       win_percent: user.win_percent}
   end
 end

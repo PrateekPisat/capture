@@ -12,6 +12,7 @@ defmodule Capture.Application do
       supervisor(Capture.Repo, []),
       # Start the endpoint when the application starts
       supervisor(CaptureWeb.Endpoint, []),
+      worker(Capture.GamesList, []),
       # Start your own worker by calling: Capture.Worker.start_link(arg1, arg2, arg3)
       # worker(Capture.Worker, [arg1, arg2, arg3]),
     ]

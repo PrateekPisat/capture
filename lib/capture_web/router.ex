@@ -17,6 +17,9 @@ defmodule CaptureWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/landing", PageController, :index
+    get "/users/new", PageController, :index
+    get "/gamepage", PageController, :index
   end
 
   # Other scopes may use custom stacks.
@@ -25,5 +28,6 @@ defmodule CaptureWeb.Router do
 
      resources "/users", UserController, except: [:new, :edit]
      post "/session", SessionController, :create
+     post "/newgame", FindGameController, :findGame
    end
 end
