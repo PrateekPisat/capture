@@ -56,7 +56,8 @@ class Demo extends React.Component {
     this.state = {
         user: "",
         token: "",
-        channel_no: ""
+        game: "",
+        channel: ""
  	   };
   }
 
@@ -146,16 +147,31 @@ class Demo extends React.Component {
       data: JSON.stringify(data),
       success: (resp) => {
           console.log(resp.channel_no);
+          localStorage.setItem("channelNo", resp.channel_no); //caching the channel no for reconnection.
           let channel = socket.channel("games:"+resp.channel_no, {})
           channel.join()
             .receive("ok", resp => { console.log("Joined successfully", resp) })
             .receive("error", resp => { console.log("Unable to join", resp) })
-          this.setState(_.extend(this.state, { channel_no: resp.channel_no }));
+          channel.push("addUser", {user_id: this.state.user.id})
+          channel.on("shout", this.passToState.bind(this))
+          this.setState(_.extend(this.state, {channel: channel}))
         },
       error:(resp) => {
         alert("Something went wrong!")
       }
     });
+  }
+
+  passToState(gameState)
+  {
+    this.setState(_.extend(this.state, {game: gameState.game}))
+  }
+
+  quit(win_percent, user_id)
+  {
+    this.state.channel.push("deleteUser", {user_id: this.state.user.id})
+    console.log(this.state)
+    this.state.channel.on("shout", this.passToState.bind(this))
   }
 
 
@@ -201,8 +217,8 @@ class Demo extends React.Component {
                 return(
                   <div>
                     Welcome {this.state.user.name}!<br/>
-                  Your Win Percentage =  {this.state.user.win_percent}<br/>
-                <Link to="/gamepage" className = "btn btn-primary" onClick={() => this.findMatch(this.state.user.win_percent, this.state.user.id)}>Find Match</Link>
+                    Your Win Percentage =  {this.state.user.win_percent}<br/>
+                    <Link to="/gamepage" className = "btn btn-primary" onClick={() => this.findMatch(this.state.user.win_percent, this.state.user.id)}>Find Match</Link>
                   </div>
                 );
               }
@@ -231,11 +247,13 @@ class Demo extends React.Component {
           }/>
         <Route path="/gamepage" render={() =>
             {
-              if(this.state.channel_no)
+              if(this.state.game)
               {
                 return(
                   <div>
-                    Welcome to New Game {this.state.channel_no}<br/>
+                    Welcome to New Game {this.state.game.channel_no}<br/>
+                  Team 1 = {_.map(this.state.game.team1, (pp) => pp)}
+                  <Link to="/landing" className = "btn btn-danger" onClick={() => this.quit(this.state.user.win_percent, this.state.user.id)}>Quit Game</Link>
                   </div>
                 );
               }

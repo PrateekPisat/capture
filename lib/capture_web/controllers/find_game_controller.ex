@@ -80,4 +80,29 @@ defmodule CaptureWeb.FindGameController do
         end
     end
   end
+
+  def quit(win_percent, user_id) do
+    cond do
+      win_percent in 0..24 ->
+        {players, channelNo} = GamesList.load(1)
+        if Enum.member?(players, user_id) do
+          List.delete(players, user_id)
+        end
+      win_percent in 25..49 ->
+        {players, channelNo} = GamesList.load(2)
+        if Enum.member?(players, user_id) do
+          List.delete(players, user_id)
+        end
+      win_percent in 50..74 ->
+        {players, channelNo} = GamesList.load(3)
+        if Enum.member?(players, user_id) do
+          List.delete(players, user_id)
+        end
+      win_percent in 75..100 ->
+        {players, channelNo} = GamesList.load(4)
+        if Enum.member?(players, user_id) do
+          List.delete(players, user_id)
+        end
+    end
+  end
 end
