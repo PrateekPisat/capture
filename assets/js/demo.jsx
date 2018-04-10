@@ -254,7 +254,7 @@ class Demo extends React.Component {
                     Welcome to New Game {this.state.game.channel_no}<br/>
                   Team 1 = {_.map(this.state.game.team1, (pp) => pp)}
                   <Link to="/landing" className = "btn btn-danger" onClick={() => this.quit(this.state.user.win_percent, this.state.user.id)}>Quit Game</Link>
-                  </div>
+                 </div>
                 );
               }
               else {
