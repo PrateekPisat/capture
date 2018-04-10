@@ -20,19 +20,21 @@ defmodule Capture.Game do
       team2 = team2 ++ [user_id]
       state = Map.put(state, :team2, team2)
     end
+    state
   end
 
   def removePlayer(user_id, state) do
     team1 = state.team1
     team2 = state.team2
     if Enum.member?(team1, user_id) do
-      List.delete(team1, user_id)
+      team1 = List.delete(team1, user_id)
       state = Map.put(state, :team1, team1)
     end
     if Enum.member?(team2, user_id) do
-      List.delete(team2, user_id)
+      team2 = List.delete(team2, user_id)
       state = Map.put(state, :team2, team2)
     end
+    state
   end
 
 end

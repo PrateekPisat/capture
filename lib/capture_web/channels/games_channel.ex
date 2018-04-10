@@ -2,6 +2,7 @@ defmodule CaptureWeb.GamesChannel do
   use CaptureWeb, :channel
   alias Capture.GameBackup
   alias Capture.Game
+  alias Capture.GamesList
 
   def join("games:" <> channel_no, payload, socket) do
     if authorized?(payload) do
@@ -31,6 +32,32 @@ defmodule CaptureWeb.GamesChannel do
   def handle_in("deleteUser", payload, socket) do
     game = Game.removePlayer(payload["user_id"], GameBackup.load(socket.assigns[:channel_no]))
     GameBackup.save(socket.assigns[:channel_no], game)
+    cond do
+      payload["win_percent"] in 0..24 ->
+        {players, channelNo} = GamesList.load(1)
+        if Enum.member?(players, payload["user_id"]) do
+          players = List.delete(players, payload["user_id"])
+          GamesList.save(1, {players, channelNo})
+        end
+      payload["win_percent"] in 25..49 ->
+        {players, channelNo} = GamesList.load(2)
+        if Enum.member?(players, payload["user_id"]) do
+          players = List.delete(players, payload["user_id"])
+          GamesList.save(2, {players, channelNo})
+        end
+      payload["win_percent"] in 50..74 ->
+        {players, channelNo} = GamesList.load(3)
+        if Enum.member?(players, payload["user_id"]) do
+          players = List.delete(players, payload["user_id"])
+          GamesList.save(3, {players, channelNo})
+        end
+      payload["win_percent"] in 75..100 ->
+        {players, channelNo} = GamesList.load(4)
+        if Enum.member?(players, payload["user_id"]) do
+          players = List.delete(players, payload["user_id"])
+          GamesList.save(4, {players, channelNo})
+        end
+    end
     broadcast socket, "shout", %{"game" => game}
     {:noreply, socket}
   end

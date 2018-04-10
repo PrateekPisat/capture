@@ -164,28 +164,13 @@ class Demo extends React.Component {
 
   passToState(gameState)
   {
+    console.log(gameState)
     this.setState(_.extend(this.state, {game: gameState.game}))
   }
 
   quit(win_percent, user_id)
   {
-    let data = {
-        win_percent: win_percent,
-        user_id: user_id
-    }
-    this.state.channel.push("deleteUser", {user_id: this.state.user.id})
-    $.ajax("/api/v1/newgame/", {
-      method: "delete",
-      dataType: "json",
-      contentType: "application/json; charset=UTF-8",
-      data: JSON.stringify(data),
-      success: (resp) => {
-          alert("You Left The Game(Decrease Win-Percent by 1)");
-        },
-      error:(resp) => {
-        alert("Something went wrong!")
-      }
-    });
+    this.state.channel.push("deleteUser", {user_id: user_id, win_percent: win_percent})
     this.state.channel.on("shout", this.passToState.bind(this))
   }
 
@@ -267,7 +252,7 @@ class Demo extends React.Component {
                 return(
                   <div>
                     Welcome to New Game {this.state.game.channel_no}<br/>
-                  Team 1 = {_.map(this.state.game.team1, (pp) => pp.name)}<br/>
+                  Team 1 = {_.map(this.state.game.team1, (pp) =>  pp)}<br/>
                   <Link to="/landing" className = "btn btn-danger" onClick={() => this.quit(this.state.user.win_percent, this.state.user.id)}>Quit Game</Link>
                   </div>
                 );
