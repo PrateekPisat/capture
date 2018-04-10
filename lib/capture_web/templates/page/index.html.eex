@@ -1,2 +1,14 @@
 <div id="root">
 </div>
+
+<div class="map-frame mt-5">
+  <iframe
+    width="100%"
+    height="600px"
+    marginwidth="0"
+    marginheight="0"
+    frameborder="0" style="border:0"
+    src="https://www.google.com/maps/embed/v1/view?key=AIzaSyCaUikEycWixH_xYYkAenITaq-r7uM09Ug&center=42.3394299,-71.0906958&zoom=16" allowfullscreen>
+  </iframe>
+</div>
+
