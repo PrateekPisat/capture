@@ -23,12 +23,14 @@ defmodule CaptureWeb.GamesChannel do
 
   def handle_in("addUser", payload, socket) do
     game = Game.addPlayer(payload["user_id"], GameBackup.load(socket.assigns[:channel_no]))
+    GameBackup.save(socket.assigns[:channel_no], game)
     broadcast socket, "shout", %{"game" => game}
     {:noreply, socket}
   end
 
   def handle_in("deleteUser", payload, socket) do
     game = Game.removePlayer(payload["user_id"], GameBackup.load(socket.assigns[:channel_no]))
+    GameBackup.save(socket.assigns[:channel_no], game)
     broadcast socket, "shout", %{"game" => game}
     {:noreply, socket}
   end

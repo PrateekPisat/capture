@@ -29,5 +29,6 @@ defmodule CaptureWeb.Router do
      resources "/users", UserController, except: [:new, :edit]
      post "/session", SessionController, :create
      post "/newgame", FindGameController, :findGame
+     delete "/newgame", FindGameController, :quit
    end
 end

@@ -169,8 +169,23 @@ class Demo extends React.Component {
 
   quit(win_percent, user_id)
   {
+    let data = {
+        win_percent: win_percent,
+        user_id: user_id
+    }
     this.state.channel.push("deleteUser", {user_id: this.state.user.id})
-    console.log(this.state)
+    $.ajax("/api/v1/newgame/", {
+      method: "delete",
+      dataType: "json",
+      contentType: "application/json; charset=UTF-8",
+      data: JSON.stringify(data),
+      success: (resp) => {
+          alert("You Left The Game(Decrease Win-Percent by 1)");
+        },
+      error:(resp) => {
+        alert("Something went wrong!")
+      }
+    });
     this.state.channel.on("shout", this.passToState.bind(this))
   }
 
@@ -252,7 +267,7 @@ class Demo extends React.Component {
                 return(
                   <div>
                     Welcome to New Game {this.state.game.channel_no}<br/>
-                  Team 1 = {_.map(this.state.game.team1, (pp) => pp)}
+                  Team 1 = {_.map(this.state.game.team1, (pp) => pp.name)}<br/>
                   <Link to="/landing" className = "btn btn-danger" onClick={() => this.quit(this.state.user.win_percent, this.state.user.id)}>Quit Game</Link>
                   </div>
                 );

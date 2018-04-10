@@ -1,3 +1,5 @@
+alias Capture.Accounts
+
 defmodule Capture.Game do
 
   def new(channel_no) do
