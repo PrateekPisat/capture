@@ -1,10 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';import socket from "./socket";
 
-export default function run_demo(root) {
-  ReactDOM.render(<Demo channel/>, root);
-}
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -17,8 +13,8 @@ class Game extends React.Component {
       players: [], //data structure to follow.
       buildings: [], //also to follow
       score: {
-        playerTeam: 0,
-        enemyTeam: 0,
+        team1: 0,
+        team2: 0,
       },
       chat: [], //to follow
  	  });
@@ -182,6 +178,7 @@ class Game extends React.Component {
   //so far this just renders the map and throws everything on top of it. itll be nice and clean
   //with that said, if that doesnt work or just looks bad, ill design this with them being seperate
   renderMap() {
+    /*
     return (
       //this is meaningless rn but im basing it off of https://github.com/tomchentw/react-google-maps which we dont have yet
       <GoogleMap
@@ -195,6 +192,15 @@ class Game extends React.Component {
         { this.renderScoreAndPlayers() }
       </GoogleMap>
     )
+    */
+    //until i have a Map ill just...skip it
+    <div>
+      <div id='chat-button'>
+        { this.renderGameButton() }
+        { this.renderChat() }
+      </div>
+      { this.renderScoreAndPlayers() }
+    </div>
   }
 
   renderGameButton() {
@@ -205,7 +211,7 @@ class Game extends React.Component {
     //default button parameters
     let cFunction = undefined, // the function to pass down
       clickable = false, // whether a user can press it or not
-      purpose = 'capture' // for the style/labeling. default is capture, unclickable
+      purpose = 'Capture' // for the style/labeling. default is capture, unclickable
       arg = undefined; // args to pass to the function
 
     if(player.alive) {
@@ -215,7 +221,7 @@ class Game extends React.Component {
           if(b.owner != pTeam) {
             cFunction = this.captureBuilding;
             clickable = true;
-            action = 'capture';
+            action = 'Capture';
             arg = b;
           }
           else if(b.owner == pTeam && b.isBeingCaptured) { // if you own the building but it's being captured
@@ -230,26 +236,11 @@ class Game extends React.Component {
     else { //if player is knocked out, they gotta revive
       //this is the same thing as b.canInteract if b was snell. this makes me question my decision making, because
       //it's basically the same quality but used/referenced two different ways
-      if(canRevive) {
-        cFunction = this.revive;
-        clickable = true;
-        purpose = 'revive';
-        //no argument for this one i think
-      }
-      else {
-        clickable = false;
-        purpose = 'revive';
-      }
+      purpose = 'Revive'
+      cFunction = this.revive;
+      clickable = canRevive;
     }
 
-
-    //as i write this, im just realizing that i did the onclick completely differently than i usually do...i think?
-    //usually i just write all the logic above into a function that i pass as the onclick to the child
-    //but since all the same logic is gonna be used to determine what the actual style of the button
-    //maybe it just makes sense to figure it all out here. any opinions/objections welcome lol
-
-    //also, im gonna write GameButton later. basically it just renders with style based on clickable and purpose
-    //and on click (if possible), it calls cFunction(arg)
     return (
       <GameButton
         arg={arg}
@@ -274,7 +265,21 @@ class Game extends React.Component {
   }
 
   renderScoreAndPlayers() {
-    //seems self explanatory and a job for later
+    const { score, players } = this.props;
+    let team1, team2 = [];
+    for(p in players) {
+      if(players[p]['team'] == 1) {
+        team1.push(players[p]);
+      }
+      else {
+        team2.push(players[p]);
+      }
+    }
+    return(
+      <div id='score'>
+      
+      </div>
+    )
   }
 
   render() {
@@ -292,8 +297,3 @@ class Game extends React.Component {
   }
 }
 
-//also need to write gamebutton.
-//either way, this should show what things are gonna look like as well as how ill be communicating with the server
-//im mostly basing the communication part based off of how i did project 1, so if im way off, lemme know
-//also cannot emphasize enough that im assuming that the data is gonna look like this because i didnt look to see what
-//yall have it as. probably worth a discussion
