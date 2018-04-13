@@ -1,4 +1,4 @@
-defmodule CaptureWeb.GamesChannel do
+  defmodule CaptureWeb.GamesChannel do
   use CaptureWeb, :channel
   alias Capture.GameBackup
   alias Capture.Game
