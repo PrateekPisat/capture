@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter as Router, Link, Route} from 'react-router-dom';
 import socket from "./socket";
+import Game from './Game';
 
 export default function run_demo(root) {
   ReactDOM.render(<Demo channel/>, root);
@@ -252,6 +253,7 @@ class Demo extends React.Component {
                 return(
                   <div>
                     Welcome to New Game {this.state.game.channel_no}<br/>
+                    <Game />
                   Team 1 = {_.map(this.state.game.team1, (pp) =>  pp)}<br/>
                   <Link to="/landing" className = "btn btn-danger" onClick={() => this.quit(this.state.user.win_percent, this.state.user.id)}>Quit Game</Link>
                  </div>

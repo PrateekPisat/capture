@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';import socket from "./socket";
 
-class Game extends React.Component {
+export default class Game extends React.Component {
   constructor(props) {
     super(props);
     this.channel = props.channel;
@@ -42,11 +42,11 @@ class Game extends React.Component {
 
   componentDidMount() {
     this.interval = setInterval(this.getUserLocation, 1000);
-  },
+  }
 
   componentWillUnmount() {
     clearInterval(this.interval);
-  },
+  }
 
   fakeState() {
     this.state.currentPlayerId = 0;
@@ -107,11 +107,11 @@ class Game extends React.Component {
         canRevive: false,
       },
     ];
-    this.state.snell: {
+    this.state.snell = {
       location: { lat: 0, long: 0 }, //im keeping this as a seperate part of the state because of different interactions
       // the location should be saved in the server and fetched from there regardless
     }
-    this.state.buildings: [ //should come from server
+    this.state.buildings = [ //should come from server
       0: {
         id: 0,
         name: 'CCIS',
@@ -149,12 +149,12 @@ class Game extends React.Component {
         owner: null,
         currentlyCapturingPlayer: null,
       }
-    ],
-    this.state.score: { player: 3, enemy: 1 },
-    this.state.chat: [
+    ]
+    this.state.score = { player: 3, enemy: 1 },
+    this.state.chat = [
       {pId: 0, chat: 'gl hf'},
       {pId: 1, chat: 'HAHA GG EZ LOOOOOL'}
-    ],
+    ]
   }
 
   captureBuilding(building) {
@@ -247,6 +247,7 @@ class Game extends React.Component {
         clickable={clickable}
         clickHandler={cFunction}
         purpose={purpose}
+      />
     );
   }
 
@@ -254,7 +255,7 @@ class Game extends React.Component {
     const { chat } = this.state;
     return (
       //im seriously just guessing at the style here. notice a theme?
-      <div id='chat' style={height: '10vh', overflow-y: 'auto'}>
+      <div id='chat' style={{height: '10vh', overflow: 'auto'}}>
         {chat.map(function(line, index) { //for what it's worth, these variables dont matter
             return (
               <p><span id='chat-id'>{ line.pId } :</span> { line.chat }</p>
