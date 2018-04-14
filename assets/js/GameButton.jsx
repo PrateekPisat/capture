@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';import socket from "./socket";
 
-class GameButton extends React.Component {
+export default class GameButton extends React.Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);

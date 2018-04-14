@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';import socket from "./socket";
+import GameButton from './GameButton';
 
 export default class Game extends React.Component {
   constructor(props) {
@@ -18,9 +19,7 @@ export default class Game extends React.Component {
       },
       chat: [], //to follow
  	  });
-    this.channel.join()
-                .receive("ok", this.joinGame.bind(this))
-                .receive("error", resp => { console.log("couldnt join") }) //add an error alert function that takes in all errors and alerts with the reason
+    this.channel = props.channel;
     this.channel.on("update", this.update.bind(this));
   }
 
@@ -35,11 +34,12 @@ export default class Game extends React.Component {
 
   getUserLocation() {
     if(navigator.geolocation) {
-      const coords = navigator.geolocation.getCurrentPosition()
-      this.setState({ location: { lat: coords.latitude, long: coord.longitude }});
+      navigator.geolocation.getCurrentPosition(function(coords) {
+        this.setState({ location: { lat: coords.latitude, long: coord.longitude }});
+      });
     }
   }
-
+  
   componentDidMount() {
     this.interval = setInterval(this.getUserLocation, 1000);
   }
@@ -211,7 +211,7 @@ export default class Game extends React.Component {
     //default button parameters
     let cFunction = undefined, // the function to pass down
       clickable = false, // whether a user can press it or not
-      purpose = 'Capture' // for the style/labeling. default is capture, unclickable
+      purpose = 'Capture', // for the style/labeling. default is capture, unclickable
       arg = undefined; // args to pass to the function
 
     if(player.alive) {
@@ -258,7 +258,7 @@ export default class Game extends React.Component {
       <div id='chat' style={{height: '10vh', overflow: 'auto'}}>
         {chat.map(function(line, index) { //for what it's worth, these variables dont matter
             return (
-              <p><span id='chat-id'>{ line.pId } :</span> { line.chat }</p>
+              <p key={'chat-' + index}><span id='chat-id'>{ line.pId } :</span> { line.chat }</p>
             );
           }, this)};
       </div>
